@@ -260,6 +260,67 @@ button:disabled { opacity: 0.3; cursor: not-allowed; }
   font-size: 0.75rem;
 }
 
+/* Terms differential card */
+.full-width {
+  margin-bottom: 0.75rem;
+}
+
+.terms-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.term-group h4 {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.6rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.term-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.term-bar-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  min-width: 2.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.term-bar-track {
+  flex: 1;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.term-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.term-bar-fill.selected {
+  box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
+}
+
+.term-bar-value {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  min-width: 2.2rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 .card-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -417,6 +478,7 @@ footer {
 @media (max-width: 600px) {
   .app { padding: 1.25rem 1rem; }
   .card-grid { grid-template-columns: 1fr; }
+  .terms-grid { grid-template-columns: 1fr; gap: 1rem; }
   .input-group { flex-direction: column; }
   .report-header { flex-direction: column; gap: 0.25rem; }
 }

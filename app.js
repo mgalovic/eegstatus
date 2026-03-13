@@ -123,7 +123,9 @@ Follow these steps in order. Your REASONING section must address each step expli
 
 **Output format:**
 First, write a REASONING section (200–400 words) explaining your analysis step by step. You MUST explicitly address the RDA vs PD distinction and evolution assessment.
-Then output a JSON block in a \`\`\`json code fence with EXACTLY this schema:
+Then output a JSON block in a \`\`\`json code fence with EXACTLY this schema.
+
+**term1_probabilities and term2_probabilities:** For each possible value of Term 1 (G, L, BI, UI, Mf, none) and Term 2 (PDs, RDA, SW, none), provide a probability (0–100) representing how likely that term applies to this EEG. The probabilities within each group should sum to approximately 100. "none" represents no rhythmic/periodic pattern being present. These probabilities allow the reader to see your differential and how confident you are in the chosen term versus alternatives.
 
 \`\`\`json
 {
@@ -139,6 +141,20 @@ Then output a JSON block in a \`\`\`json code fence with EXACTLY this schema:
     "continuity": "continuous|nearly continuous|discontinuous|burst-suppression|suppressed",
     "symmetry": "symmetric|asymmetric",
     "reactivity": "present|absent|not tested|unknown"
+  },
+  "term1_probabilities": {
+    "G": 0,
+    "L": 0,
+    "BI": 0,
+    "UI": 0,
+    "Mf": 0,
+    "none": 0
+  },
+  "term2_probabilities": {
+    "PDs": 0,
+    "RDA": 0,
+    "SW": 0,
+    "none": 0
   },
   "pattern": {
     "present": true,
@@ -429,6 +445,7 @@ function renderReport(data, reasoning, jsonStr) {
   reasoningText.textContent = reasoning;
   rawJsonText.textContent = JSON.stringify(data, null, 2);
 
+  renderTermsCard(data);
   renderPatternCard(data);
   renderCategoryCard(data);
   renderRiskCard(data);
@@ -436,6 +453,54 @@ function renderReport(data, reasoning, jsonStr) {
 
   reportSection.hidden = false;
   reportSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+function renderTermsCard(data) {
+  const termsCard = document.getElementById('terms-card');
+  const term1Container = document.getElementById('term1-bars');
+  const term2Container = document.getElementById('term2-bars');
+
+  const t1 = data.term1_probabilities || {};
+  const t2 = data.term2_probabilities || {};
+  const selectedT1 = data.pattern ? data.pattern.main_term_1 : 'none';
+  const selectedT2 = data.pattern ? data.pattern.main_term_2 : 'none';
+
+  const term1Labels = { G: 'G', L: 'L', BI: 'BI', UI: 'UI', Mf: 'Mf', none: 'None' };
+  const term1Full = { G: 'Generalized', L: 'Lateralized', BI: 'Bilateral Indep.', UI: 'Unilateral Indep.', Mf: 'Multifocal', none: 'No pattern' };
+  const term2Labels = { PDs: 'PDs', RDA: 'RDA', SW: 'SW', none: 'None' };
+  const term2Full = { PDs: 'Periodic Discharges', RDA: 'Rhythmic Delta Activity', SW: 'Spike-and-Wave', none: 'No pattern' };
+
+  term1Container.innerHTML = renderTermBars(t1, term1Labels, term1Full, selectedT1);
+  term2Container.innerHTML = renderTermBars(t2, term2Labels, term2Full, selectedT2);
+
+  // Apply category color to the terms card
+  if (data.clinical_category) {
+    const cat = data.clinical_category.category.toLowerCase().replace(/\s/g, '');
+    applyCategoryClass(termsCard, cat);
+  }
+}
+
+function renderTermBars(probs, labels, fullNames, selected) {
+  const keys = Object.keys(labels);
+  // Sort by probability descending
+  keys.sort((a, b) => (probs[b] || 0) - (probs[a] || 0));
+
+  return keys.map(key => {
+    const v = Math.max(0, Math.min(100, probs[key] || 0));
+    const isSelected = key === selected;
+    const barColor = isSelected ? 'var(--accent)' : 'var(--text-muted)';
+    const labelColor = isSelected ? 'color: var(--text)' : '';
+    const title = fullNames[key] || key;
+    return `
+      <div class="term-bar-row" title="${escHtml(title)}">
+        <span class="term-bar-label" style="${labelColor}">${escHtml(labels[key])}</span>
+        <div class="term-bar-track">
+          <div class="term-bar-fill ${isSelected ? 'selected' : ''}" style="width:${v}%;background:${barColor}"></div>
+        </div>
+        <span class="term-bar-value">${v}%</span>
+      </div>
+    `;
+  }).join('');
 }
 
 function renderPatternCard(data) {
