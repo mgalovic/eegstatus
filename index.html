@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACNS EEG Classifier</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        </svg>
+        <h1>EEG Classifier</h1>
+      </div>
+      <p class="subtitle">ACNS 2021 standardized terminology</p>
+    </header>
+
+    <main>
+      <section id="api-key-section">
+        <label for="api-key-input">API Key</label>
+        <div class="input-group">
+          <input type="password" id="api-key-input" placeholder="sk-ant-..." autocomplete="off">
+          <button id="save-key-btn">Save</button>
+        </div>
+        <p id="key-status" class="status-text"></p>
+      </section>
+
+      <section id="upload-section">
+        <div id="drop-zone">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <p>Drop EEG image here or <span class="link">browse</span></p>
+          <input type="file" id="file-input" accept="image/*" hidden>
+        </div>
+        <img id="preview" alt="EEG preview" hidden>
+        <div id="rate-limit-info" class="rate-info" hidden></div>
+        <button id="analyze-btn" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+          Analyze EEG
+        </button>
+      </section>
+
+      <section id="loading" hidden>
+        <div class="spinner"></div>
+        <p>Analyzing with Claude Opus</p>
+      </section>
+
+      <div id="error-banner" hidden></div>
+
+      <section id="report-section" hidden>
+        <div class="report-header">
+          <h2>Classification Report</h2>
+          <span class="report-timestamp" id="report-timestamp"></span>
+        </div>
+
+        <div class="card-grid">
+          <div class="card" id="pattern-card">
+            <h3>Pattern</h3>
+            <div class="card-body"></div>
+          </div>
+          <div class="card" id="category-card">
+            <h3>Clinical Category</h3>
+            <div class="card-body"></div>
+          </div>
+          <div class="card" id="risk-card">
+            <h3>Seizure Risk</h3>
+            <div class="card-body"></div>
+          </div>
+          <div class="card" id="summary-card">
+            <h3>Summary</h3>
+            <div class="card-body"></div>
+          </div>
+        </div>
+
+        <details id="reasoning-section">
+          <summary>AI Reasoning</summary>
+          <pre id="reasoning-text"></pre>
+        </details>
+
+        <details id="raw-json-section">
+          <summary>Raw JSON</summary>
+          <pre id="raw-json-text"></pre>
+        </details>
+
+        <button id="print-btn" class="btn-secondary">Export / Print</button>
+      </section>
+    </main>
+
+    <footer>
+      <div class="disclaimer">Research & educational use only</div>
+      <p>ACNS 2021 &middot; Rodriguez Ruiz et al., JAMA Neurol 2017</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
